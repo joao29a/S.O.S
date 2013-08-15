@@ -1,5 +1,7 @@
 #include "include/GerenciadorServidores.hpp"
 
+/* For each connection wait for a msg. When it receve a mensage
+ * call askToServer and write the result for the client */
 void GerenciadorServidores::clientListening(tcp::socket& sock){
    try{
       while(true){
@@ -13,14 +15,18 @@ void GerenciadorServidores::clientListening(tcp::socket& sock){
          else if (error)
             throw boost::system::system_error(error);
 
-         shared_ptr<Message> msg_ptr = messageParse(string(data));
-         //TODO!
+         string reply = askToServers(string(data));
+         boost::asio::write(sock, boost::asio::buffer(
+                     reply.c_str(), reply.size()));
+
       }
    }catch (std::exception& e){
       std::cerr << "Exception in thread: " << e.what() << "\n";
    }
 }
 
+/* For each client to conect create a Thread to do what was ask by the
+ * client */
 void GerenciadorServidores::clientManaging(boost::asio::io_service& io_service
       ,unsigned short port){
 
@@ -30,15 +36,43 @@ void GerenciadorServidores::clientManaging(boost::asio::io_service& io_service
       cout << "Esperando conexão..." << endl;
       a.accept(sock);
       std::thread(boost::bind(&GerenciadorServidores::clientListening,
-                  this,boost::ref(sock))).detach();
+               this,boost::ref(sock))).detach();
       cout << "Conexão iniciada!" << endl;
    }
 
 }
 
-void GerenciadorServidores::serverManaging(){
+/* Ask for all server with they have some thing to the msg and
+ * return the result from the first server to have*/
+string GerenciadorServidores::askToServers
+(string msg){
+   try{
+      for(int serverId=0;serverId<3;serverId++){ //FIXME!
+         boost::asio::io_service io_service;
 
+         tcp::socket s(io_service);
+         tcp::resolver resolver(io_service);
+         boost::asio::connect(s, resolver.resolve({"127.0.0.1",
+                                    to_string(8870+serverId).c_str()}));
+
+         size_t request_length = std::strlen(msg.c_str());
+         boost::asio::write(s, boost::asio::buffer(msg.c_str(), request_length));
+
+         char reply[10000];
+         size_t reply_length = boost::asio::read(s,
+               boost::asio::buffer(reply, request_length));
+
+         shared_ptr<Message> msg_ptr = messageParse(string(reply));
+         if(msg_ptr->reason != "null"){
+            return string(reply);
+         }
+      }
+   }catch (std::exception& e){
+      std::cerr << "Exception: " << e.what() << "\n";
+   }
+   return string("null");
 }
+
 
 void GerenciadorServidores::startService(int port){
    try{
