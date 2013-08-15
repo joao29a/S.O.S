@@ -1,14 +1,15 @@
 #include "include/GerenciadorServidores.hpp"
 
+
 /* For each connection wait for a msg. When it receve a mensage
  * call askToServer and write the result for the client */
-void GerenciadorServidores::clientListening(tcp::socket& sock){
+void GerenciadorServidores::clientListening(socket_ptr sock){
    try{
       while(true){
          char data[10000];
 
          boost::system::error_code error;
-         size_t length = sock.read_some(boost::asio::buffer(data), error);
+         size_t length = sock->read_some(boost::asio::buffer(data), error);
 
          if (error == boost::asio::error::eof)
             break;
@@ -16,7 +17,7 @@ void GerenciadorServidores::clientListening(tcp::socket& sock){
             throw boost::system::system_error(error);
 
          string reply = askToServers(string(data));
-         boost::asio::write(sock, boost::asio::buffer(
+         boost::asio::write(*sock, boost::asio::buffer(
                      reply.c_str(), reply.size()));
 
       }
@@ -32,18 +33,18 @@ void GerenciadorServidores::clientManaging(boost::asio::io_service& io_service
 
    tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
    while(true){
-      tcp::socket sock(io_service);
+      socket_ptr sock(new tcp::socket(io_service));
       cout << "Esperando conexão..." << endl;
-      a.accept(sock);
+      a.accept(*sock);
       std::thread(boost::bind(&GerenciadorServidores::clientListening,
-               this,boost::ref(sock))).detach();
+               this,sock)).detach();
       cout << "Conexão iniciada!" << endl;
    }
 
 }
 
-/* Ask for all server with they have some thing to the msg and
- * return the result from the first server to have*/
+/* Ask for all server if they have some thing asked by the msg
+ * and return the result from the first server to have*/
 string GerenciadorServidores::askToServers
 (string msg){
    try{
@@ -62,7 +63,7 @@ string GerenciadorServidores::askToServers
          size_t reply_length = boost::asio::read(s,
                boost::asio::buffer(reply, request_length));
 
-         shared_ptr<Message> msg_ptr = messageParse(string(reply));
+         message_ptr msg_ptr = messageParse(string(reply));
          if(msg_ptr->reason != "null"){
             return string(reply);
          }
