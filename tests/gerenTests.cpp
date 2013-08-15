@@ -4,5 +4,9 @@
 #include "lib/msgParse.hpp"
 
 BOOST_AUTO_TEST_CASE(TestMsgParse){
-   BOOST_CHECK(messageParse(string()));
+   shared_ptr<Message> msg_ptr =
+                  messageParse(string("teste?teste1=test"));
+   BOOST_CHECK_EQUAL(msg_ptr->reason,string("teste"));
+   BOOST_CHECK_EQUAL(msg_ptr->atributes[string("teste1")],
+                     string("test"));
 }
