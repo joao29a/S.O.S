@@ -7,15 +7,17 @@
 
 using namespace std;
 
+
 struct Message{
    string reason;
    unordered_map<string,string> atributes;
 };
 
-shared_ptr<Message> messageParse(string);
+typedef boost::shared_ptr<Message> message_ptr;
+message_ptr messageParse(string);
 
 /* msg will be something like: 'reason?attr1=val1&attr2=val2'*/
-shared_ptr<Message> messageParse(string msg){
+message_ptr messageParse(string msg){
    Message* msgStruct = new Message;
 
    /* Parse the reason */
@@ -33,5 +35,5 @@ shared_ptr<Message> messageParse(string msg){
       msgStruct->atributes[strs3[0]] = strs3[1];
    }
 
-   return shared_ptr<Message>(msgStruct);
+   return message_ptr(msgStruct);
 }

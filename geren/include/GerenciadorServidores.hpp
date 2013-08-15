@@ -11,10 +11,12 @@
 
 using boost::asio::ip::tcp;
 using namespace std;
+typedef boost::shared_ptr<tcp::socket> socket_ptr;
+typedef boost::shared_ptr<Message> message_ptr;
 
 class GerenciadorServidores{
    private:
-      void clientListening(tcp::socket&);
+      void clientListening(socket_ptr);
       void serverManaging();
       void clientManaging(boost::asio::io_service& io_service, unsigned short port);
       string askToServers(string);

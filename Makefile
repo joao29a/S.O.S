@@ -1,4 +1,4 @@
-CPP=clang++
+CPP=g++
 LIBBOOST=-lboost_system -lboost_thread -lboost_unit_test_framework -I/usr/include/ -lpthread
 gerenInclude=-I./geren/
 
