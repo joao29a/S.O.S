@@ -17,6 +17,7 @@ class GerenciadorServidores{
       void clientListening(tcp::socket&);
       void serverManaging();
       void clientManaging(boost::asio::io_service& io_service, unsigned short port);
+      string askToServers(string);
    public:
       void startService(int port);
 };
