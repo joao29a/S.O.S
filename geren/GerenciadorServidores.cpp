@@ -16,20 +16,21 @@ void GerenciadorServidores::clientListening(socket_ptr sock){
          else if (error)
             throw boost::system::system_error(error);
 
-         string reply = askToServers(string(data));
+         cout << "Pergunta: " << data << endl;
+         string reply = askToServers(string(data)) + "\n";
+         cout << "Resposta: " << reply << endl;
          boost::asio::write(*sock, boost::asio::buffer(
-                     reply.c_str(), reply.size()));
-
+                     reply, reply.size()));
       }
    }catch (std::exception& e){
-      std::cerr << "Exception in thread: " << e.what() << "\n";
+      std::cerr << "Exception: clientListening: " << e.what() << "\n";
    }
 }
 
 /* For each client to conect create a Thread to do what was ask by the
  * client */
-void GerenciadorServidores::clientManaging(boost::asio::io_service& io_service
-      ,unsigned short port){
+void GerenciadorServidores::clientManaging
+(boost::asio::io_service& io_service,unsigned short port){
 
    tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
    while(true){
@@ -57,7 +58,8 @@ string GerenciadorServidores::askToServers
                                     to_string(8870+serverId).c_str()}));
 
          size_t request_length = std::strlen(msg.c_str());
-         boost::asio::write(s, boost::asio::buffer(msg.c_str(), request_length));
+         boost::asio::write(s, boost::asio::buffer(msg.c_str(),
+                  request_length));
 
          char reply[10000];
          size_t reply_length = boost::asio::read(s,
@@ -69,7 +71,7 @@ string GerenciadorServidores::askToServers
          }
       }
    }catch (std::exception& e){
-      std::cerr << "Exception: " << e.what() << "\n";
+      std::cerr << "Exception: askToServers: " << e.what() << "\n";
    }
    return string("null");
 }
@@ -80,7 +82,7 @@ void GerenciadorServidores::startService(int port){
       boost::asio::io_service io_service;
       clientManaging(io_service, port);
    }catch (std::exception& e){
-      std::cerr << "Exception: " << e.what() << "\n";
+      std::cerr << "Exception: startService: " << e.what() << "\n";
    }
 }
 
