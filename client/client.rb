@@ -1,4 +1,5 @@
 require 'socket'
+#http://www.ruby-doc.org/stdlib-1.9.3/libdoc/socket/rdoc/Socket.html
 
 def Menu()
     puts("1 - Cadastrar novo site:")
@@ -15,7 +16,6 @@ def Cadastrar()
     link = gets.chomp
     puts("Tags relacionadas ao site: (Insira as Tags separadas por virgula) ")
     tags = gets.chomp
-    #for i in tags
 end
 
 def Buscar()
