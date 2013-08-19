@@ -1,6 +1,6 @@
 require 'socket'
 #http://www.ruby-doc.org/stdlib-1.9.3/libdoc/socket/rdoc/Socket.html
-
+#teste
 def Menu()
     puts("1 - Cadastrar novo site:")
     puts("2 - Buscar site: ")
