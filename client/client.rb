@@ -19,16 +19,26 @@ def Cadastrar()
     system "clear"
     socket = TCPSocket.new 'localhost', 8888
     puts("Insira o nome do site: ")
-    nomeSite = socket.gets.chomp
+    nomeSite = gets.chomp
+    socket.send "#{nomeSite}", 0
     puts("Insira o endereco do site: ")
-    link = socket.gets.chomp
+    link = gets.chomp
     puts("Tags relacionadas ao site: (Insira as Tags separadas por virgula) ")
-    tags = socket.gets.chomp
+    tags = gets.chomp
 end
 
-#def Buscar()
-#    puts("Insira uma palavra-chave para busca: ")
-
+=begin
+def Buscar()
+    puts("Insira uma palavra-chave para busca: ")
+    busca = gets.chomp
+    for i in bancoDados 
+        if (i == busca)
+            encontrado = i + ","
+        else
+            puts("O termo desejado nao foi encontrado nos Servidores: ")
+        end
+    end
+=end
 
 Menu()
 
