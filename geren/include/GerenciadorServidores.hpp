@@ -18,6 +18,7 @@ class GerenciadorServidores{
    private:
       void clientListening(socket_ptr);
       void serverManaging();
+      string sendServer(string,int);
       void clientManaging(boost::asio::io_service& io_service, unsigned short port);
       string askToServers(string);
    public:
