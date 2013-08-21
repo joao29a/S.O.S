@@ -20,7 +20,7 @@ void GerenciadorServidores::clientListening(socket_ptr sock){
          string reply = askToServers(string(data)) + "\n";
          cout << "Resposta: " << reply << endl;
          boost::asio::write(*sock, boost::asio::buffer(
-                     reply, reply.size()));
+                  reply, reply.size()));
       }
    }catch (std::exception& e){
       std::cerr << "Exception: clientListening: " << e.what() << "\n";
@@ -44,31 +44,45 @@ void GerenciadorServidores::clientManaging
 
 }
 
+/* Send msg to server and return the result msg */
+string GerenciadorServidores::sendServer(string msg,int port){
+   boost::asio::io_service io_service;
+
+   tcp::socket s(io_service);
+   tcp::resolver resolver(io_service);
+   boost::asio::connect(s, resolver.resolve({"127.0.0.1",
+            to_string(port).c_str()}));
+
+   size_t request_length = std::strlen(msg.c_str());
+   boost::asio::write(s, boost::asio::buffer(msg.c_str(),
+            request_length));
+
+   char reply[10000];
+   size_t reply_length = boost::asio::read(s,
+         boost::asio::buffer(reply, request_length));
+
+   message_ptr msg_ptr = messageParse(string(reply));
+   return string(reply);
+}
+
 /* Ask for all server if they have some thing asked by the msg
  * and return the result from the first server to have*/
 string GerenciadorServidores::askToServers
 (string msg){
    try{
-      for(int serverId=0;serverId<3;serverId++){ //FIXME!
-         boost::asio::io_service io_service;
-
-         tcp::socket s(io_service);
-         tcp::resolver resolver(io_service);
-         boost::asio::connect(s, resolver.resolve({"127.0.0.1",
-                                    to_string(8870+serverId).c_str()}));
-
-         size_t request_length = std::strlen(msg.c_str());
-         boost::asio::write(s, boost::asio::buffer(msg.c_str(),
-                  request_length));
-
-         char reply[10000];
-         size_t reply_length = boost::asio::read(s,
-               boost::asio::buffer(reply, request_length));
-
-         message_ptr msg_ptr = messageParse(string(reply));
-         if(msg_ptr->reason != "null"){
-            return string(reply);
+      int size = 3;
+      int serverChecked[3] = {1,1,1};
+      while(size!=0){
+         int serverId = rand() % 3;
+         if(serverChecked[serverId] == 1){
+            string res = sendServer(msg,8870+serverId);
+            if(res != "null"){
+               return res;
+            }
+            serverChecked[serverId] = 0;
+            size--;
          }
+
       }
    }catch (std::exception& e){
       std::cerr << "Exception: askToServers: " << e.what() << "\n";

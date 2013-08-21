@@ -9,18 +9,15 @@
 #include <boost/asio.hpp>
 #include <boost/ref.hpp>
 
+typedef boost::shared_ptr<Message> message_ptr;
 using boost::asio::ip::tcp;
 using namespace std;
 typedef boost::shared_ptr<tcp::socket> socket_ptr;
-typedef boost::shared_ptr<Message> message_ptr;
 
-class GerenciadorServidores{
+class Server{
    private:
-      void clientListening(socket_ptr);
-      void serverManaging();
-      string sendServer(string,int);
-      void clientManaging(boost::asio::io_service& io_service, unsigned short port);
-      string askToServers(string);
+      void clientManaging();
+      void execMsg(string);
    public:
-      void startService(int port);
+      void startServer(int);
 };
