@@ -5,34 +5,32 @@ DIRSERVICE=service/
 DIRSERVER=server/
 DIRTEST=tests/
 DIRLIB=lib/
-EXESERVICE=Service
-EXESERVER=Server
-EXETEST=test$(EXESERVICE)
-EXELIB=msgParse
-EXEMANAGEMENT=Management
-STD=-std=c++11
+SRC_SERVER=$(wildcard $(DIRSERVER)*.cpp)
+SRC_SERVICE=$(wildcard $(DIRSERVICE)*.cpp)
+SRC_LIB_MANAG=$(wildcard $(DIRMANAGEMENT)*.cpp $(DIRLIB)*.cpp)
+SRC_TEST=$(DIRTEST)gerenTests.cpp
+OBJ_SERVER=$(SRC_SERVER:.cpp=.o)
+OBJ_SERVICE=$(SRC_SERVICE:.cpp=.o)
+OBJ_LIB_MANAG=$(SRC_LIB_MANAG:.cpp=.o)
+OBJ_TEST=$(SRC_TEST:.cpp=.o)
+INCLUDE=-I$(DIRMANAGEMENT) -I$(DIRSERVICE) -I$(DIRSERVER) -I$(DIRLIB) -std=c++11
 
-all: ServiceManager makeServer makeTest
+all: ServiceManager Server Test
 
-$(EXELIB).o:
-	$(CPP) -c $(DIRLIB)*.cpp -o $(EXELIB).o -I$(DIRLIB) $(STD)
+.cpp.o:
+	$(CPP) -c $< $(INCLUDE) -o $@
 
-$(EXEMANAGEMENT).o:
-	$(CPP) -c $(DIRMANAGEMENT)*.cpp -o $(EXEMANAGEMENT).o -I$(DIRLIB) -I$(DIRMANAGEMENT) $(STD)
+Server: $(OBJ_LIB_MANAG) $(OBJ_SERVER)
+	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
 
-ServiceManager: $(EXELIB).o $(EXEMANAGEMENT).o
-	 ${CPP} -I./ -I$(DIRSERVICE) $(DIRSERVICE)*.cpp -I$(DIRLIB) -I$(DIRMANAGEMENT)\
-		 $(EXEMANAGEMENT).o $(EXELIB).o -o $(EXESERVICE) ${LIBBOOST} $(STD)
+ServiceManager: $(OBJ_LIB_MANAG) $(OBJ_SERVICE)
+	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
 
-makeServer: $(EXELIB).o $(EXEMANAGEMENT).o
-	 ${CPP} -I./ -I$(DIRSERVER) $(DIRSERVER)*.cpp -I$(DIRLIB) -I$(DIRMANAGEMENT)\
-		 $(EXELIB).o $(EXEMANAGEMENT).o -o $(EXESERVER) ${LIBBOOST} $(STD)
-
-makeTest:
-	 ${CPP} -I$(DIRLIB) $(DIRTEST)gerenTests.cpp $(EXELIB).o -o $(EXETEST) ${LIBBOOST} -I./ $(STD)
+Test: $(OBJ_LIB_MANAG) $(OBJ_TEST)
+	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
 
 clear:
-	 rm $(EXESERVICE) -f
-	 rm $(EXETEST) -f
-	 rm $(EXESERVER) -f
-	 rm *.o -f
+	 rm $(OBJ_SERVER) $(OBJ_SERVICE) $(OBJ_LIB_MANAG) $(OBJ_TEST) -f
+	 rm Server -f
+	 rm ServiceManager -f
+	 rm Test -f

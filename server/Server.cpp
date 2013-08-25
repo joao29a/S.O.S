@@ -23,8 +23,8 @@ void Server::initServer(int port){
 	int id = fork();
 	if(id > 0){
 		initSocket(port);
-	}else{
-		/* TODO segundo fork tem que ficar consumindo a fila! */
+	}
+	else if (id == 0){
 	}
 }
 
