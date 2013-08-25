@@ -19,7 +19,8 @@ typedef boost::shared_ptr<Message> message_ptr;
 
 class Management{
 	protected:
-		virtual void listenSocket(socket_ptr){}
+		virtual void manipulateData(string,socket_ptr){}
+		void listenSocket(socket_ptr);
 		string getData(socket_ptr);
 		void connect(boost::asio::io_service&, unsigned short);
 

@@ -2,17 +2,10 @@
 
 /* For each connection wait for a msg. When it receve a mensage
  * call askToServer and write the result for the client */
-void ServiceManager::listenSocket(socket_ptr sock){
-	try{
-		while(true){
-			string data = getData(sock);
-			string reply = askToServers(data) + "\n";
-			boost::asio::write(*sock, boost::asio::buffer(
-						reply, reply.size()));
-		}
-	}catch (std::exception& e){
-		std::cerr << "Exception: listenSocket: " << e.what() << "\n";
-	}
+void ServiceManager::manipulateData(string data, socket_ptr sock){
+	string reply = askToServers(data) + "\n";
+	boost::asio::write(*sock, boost::asio::buffer(
+				reply, reply.size()));
 }
 
 /* Send msg to server and return the result msg */
@@ -32,7 +25,6 @@ string ServiceManager::sendServer(string msg,int port){
 	size_t reply_length = boost::asio::read(s,
 			boost::asio::buffer(reply, request_length));
 
-	//message_ptr msg_ptr = messageParse(string(reply));
 	return string(reply);
 }
 
@@ -42,15 +34,14 @@ string ServiceManager::askToServers(string msg){
 	try{
 		int size = 3;
 		int serverChecked[3] = {1,1,1};
-		while(size!=0){
-			int serverId = rand() % 3;
+		int serverId;
+		for (serverId = 0; serverId < size; serverId++){
 			if(serverChecked[serverId] == 1){
 				string res = sendServer(msg,8870+serverId);
 				if(res != "null"){
 					return res;
 				}
 				serverChecked[serverId] = 0;
-				size--;
 			}
 
 		}

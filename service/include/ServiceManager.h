@@ -9,8 +9,7 @@ class ServiceManager: public Management{
 		string askToServers(string);
 
 	protected:
-		void listenSocket(socket_ptr);
-
+		void manipulateData(string,socket_ptr);
 };
 
 #endif

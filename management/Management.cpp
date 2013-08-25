@@ -3,9 +3,20 @@
 /* For each client to conect create a Thread to do what was ask by the
  * client */
 
+void Management::listenSocket(socket_ptr sock){
+	try{
+		while(true){
+			string data = getData(sock);
+			manipulateData(data,sock);
+		}
+	}catch (std::exception& e){
+		std::cerr << "Exception: listenSocket: " << e.what() << "\n";
+	}
+}
+
 string Management::getData(socket_ptr sock){
 	char data[10000];
-	
+
 	boost::system::error_code error;
 	size_t length = sock->read_some(boost::asio::buffer(data), error);
 
