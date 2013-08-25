@@ -8,21 +8,31 @@ DIRLIB=lib/
 EXESERVICE=Service
 EXESERVER=Server
 EXETEST=test$(EXESERVICE)
+EXELIB=msgParse
+EXEMANAGEMENT=Management
 STD=-std=c++11
 
 all: ServiceManager makeServer makeTest
 
-ServiceManager:
-	 ${CPP} -I./ -I$(DIRSERVICE) -I$(DIRLIB) -I$(DIRMANAGEMENT)\
-		 $(DIRSERVICE)*.cpp $(DIRMANAGEMENT)*.cpp $(DIRLIB)*.cpp -o $(EXESERVICE) ${LIBBOOST} $(STD)
+$(EXELIB).o:
+	$(CPP) -c $(DIRLIB)*.cpp -o $(EXELIB).o -I$(DIRLIB) $(STD)
 
-makeServer:
-	 ${CPP} -I./ -I$(DIRSERVER) $(INCMANAGEMENT) $(DIRSERVER)*.cpp $(MANAGEMENT) -o $(EXESERVER) ${LIBBOOST} $(STD)
+$(EXEMANAGEMENT).o:
+	$(CPP) -c $(DIRMANAGEMENT)*.cpp -o $(EXEMANAGEMENT).o -I$(DIRLIB) -I$(DIRMANAGEMENT) $(STD)
+
+ServiceManager: $(EXELIB).o $(EXEMANAGEMENT).o
+	 ${CPP} -I./ -I$(DIRSERVICE) $(DIRSERVICE)*.cpp -I$(DIRLIB) -I$(DIRMANAGEMENT)\
+		 $(EXEMANAGEMENT).o $(EXELIB).o -o $(EXESERVICE) ${LIBBOOST} $(STD)
+
+makeServer: $(EXELIB).o $(EXEMANAGEMENT).o
+	 ${CPP} -I./ -I$(DIRSERVER) $(DIRSERVER)*.cpp -I$(DIRLIB) -I$(DIRMANAGEMENT)\
+		 $(EXELIB).o $(EXEMANAGEMENT).o -o $(EXESERVER) ${LIBBOOST} $(STD)
 
 makeTest:
-	 ${CPP} $(DIRTEST)gerenTests.cpp -o $(EXETEST) ${LIBBOOST} -I./ $(STD)
+	 ${CPP} -I$(DIRLIB) $(DIRTEST)gerenTests.cpp $(EXELIB).o -o $(EXETEST) ${LIBBOOST} -I./ $(STD)
 
 clear:
 	 rm $(EXESERVICE) -f
 	 rm $(EXETEST) -f
-	 rm $(EXESERVICE) -f
+	 rm $(EXESERVER) -f
+	 rm *.o -f
