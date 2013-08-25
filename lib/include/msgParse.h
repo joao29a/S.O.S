@@ -1,10 +1,9 @@
 #ifndef MESSAGEPARSE_H
 #define MESSAGEPARSE_H
 
-#include "boost/shared_ptr.hpp"
+#include <boost/shared_ptr.hpp>
 #include <unordered_map>
 #include <iostream>
-#include <unordered_map>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
