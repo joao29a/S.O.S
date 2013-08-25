@@ -1,4 +1,4 @@
-#include "include/Server.hpp"
+#include "include/Server.h"
 
 //!TODO
 /*
@@ -8,11 +8,8 @@
 
 /* TODO depois de receber uma mensagem tem que colocar na fila
  * para que o outro fork fique consumindo.*/
-void Server::clientManaging(){
-   /* TODO Só copiar o código do gerenciador. Pra cada conexão criar uma thread.
-    * Recebeu uma mensagem coloca na fila.*/
-
-}
+ 
+void Server::listenSocket(socket_ptr sock){}
 
 void Server::execMsg(string msg){
    /*!TODO
@@ -20,15 +17,10 @@ void Server::execMsg(string msg){
     */
 }
 
-void Server::startServer(int port){
+void Server::initServer(int port){
    int id = fork();
    if(id == 0){
-      try{
-         boost::asio::io_service io_service;
-         //clientManaging(io_service, port);
-      }catch (std::exception& e){
-         std::cerr << "Exception: startService: " << e.what() << "\n";
-      }
+      initSocket(port);
    }else{
       /* TODO segundo fork tem que ficar consumindo a fila! */
    }
@@ -39,8 +31,7 @@ int main(int argc, char *argv[]){
    if(argc > 1){
       port = atoi(argv[1]);
    }
-
    Server server;
-   server.startServer(port);
+   server.initServer(port);
    return 0;
 }

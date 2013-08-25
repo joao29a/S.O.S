@@ -1,20 +1,28 @@
-CPP=clang++
+CPP=g++
 LIBBOOST=-lboost_system -lboost_thread -lboost_unit_test_framework -I/usr/include/ -lpthread
-gerenInclude=-I./geren/
+DIRMANAGEMENT=management/
+DIRSERVICE=service/
+DIRSERVER=server/
+DIRTEST=tests/
+DIRLIB=lib/
+EXESERVICE=Service
+EXESERVER=Server
+EXETEST=test$(EXESERVICE)
+STD=-std=c++11
 
-all: gerenServidor Server makeTest
+all: ServiceManager makeServer makeTest
 
-gerenServidor:
-	 ${CPP} -I./ -Igeren/ geren/GerenciadorServidores.cpp -o Geren ${LIBBOOST} -std=c++11
+ServiceManager:
+	 ${CPP} -I./ -I$(DIRSERVICE) -I$(DIRLIB) -I$(DIRMANAGEMENT)\
+		 $(DIRSERVICE)*.cpp $(DIRMANAGEMENT)*.cpp $(DIRLIB)*.cpp -o $(EXESERVICE) ${LIBBOOST} $(STD)
 
-Server:
-	 ${CPP} -I./ -Iserver/ server/Server.cpp -o Server ${LIBBOOST} -std=c++11
+makeServer:
+	 ${CPP} -I./ -I$(DIRSERVER) $(INCMANAGEMENT) $(DIRSERVER)*.cpp $(MANAGEMENT) -o $(EXESERVER) ${LIBBOOST} $(STD)
 
 makeTest:
-	 ${CPP} tests/gerenTests.cpp -o testGeren ${LIBBOOST} -I./ -std=c++11
+	 ${CPP} $(DIRTEST)gerenTests.cpp -o $(EXETEST) ${LIBBOOST} -I./ $(STD)
 
 clear:
-	 rm Geren
-	 rm testGeren
-	 rm Server
-
+	 rm $(EXESERVICE) -f
+	 rm $(EXETEST) -f
+	 rm $(EXESERVICE) -f
