@@ -1,5 +1,5 @@
 CPP=g++
-LIBBOOST=-lboost_system -lboost_thread -lboost_unit_test_framework -I/usr/include/ -lpthread
+LIBBOOST=-lrt -lboost_system -lboost_thread -lboost_unit_test_framework -I/usr/include/ -lpthread
 DIRMANAGEMENT=management/
 DIRSERVICE=service/
 DIRSERVER=server/

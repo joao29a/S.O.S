@@ -1,25 +1,23 @@
 #include "include/Server.h"
 
-//!TODO
-/*
- * Aqui tem que ter o sistema de comunicação entre os dois
- * forks!
- */
-
-/* TODO depois de receber uma mensagem tem que colocar na fila
- * para que o outro fork fique consumindo.*/
+void Server::createSharedMemory(){
+	try{
+		memoryRegion = new mapped_region(anonymous_shared_memory(MEMORY_SIZE));
+		memset(memoryRegion->get_address(),0,memoryRegion->get_size());
+	} catch (exception& e){
+		cerr << "Exception: sharedMemory: " << e.what() << endl;
+	}
+}
 
 void Server::manipulateData(string data, socket_ptr sock){
 	messageQueue.push_back(data);
 }
 
 void Server::execMsg(string msg){
-	/*!TODO
-	 * Executa a mensagem e envia o resultado.
-	 */
 }
 
 void Server::initServer(int port){
+	createSharedMemory();
 	int id = fork();
 	if(id > 0){
 		initSocket(port);
