@@ -2,20 +2,21 @@
 #define SERVER_H
 
 #include "include/Management.h"
-#include <list>
+#include <queue>
 #include <boost/interprocess/anonymous_shared_memory.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#define MEMORY_SIZE 10000
+#define MEMORY_SIZE 240000
 
 using namespace boost::interprocess;
 
 struct shared_messages{
-	shared_messages() : mutex(1), size(0){}
-	interprocess_semaphore mutex, size;
-	list<string> messageQueue;
+	shared_messages() : size(0){}
+	interprocess_semaphore size;
+	queue<string> messageQueue;
 };
+
 
 class Server: public Management{
 	private:

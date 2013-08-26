@@ -19,19 +19,15 @@ void Server::createSharedMemory(){
 }
 
 void Server::manipulateData(string data, socket_ptr sock){
-	shm->mutex.wait();
-	shm->messageQueue.push_back(data);
+	shm->messageQueue.push(data);
 	shm->size.post();
-	shm->mutex.post();
 }
 
 void Server::consumeData(){
 	while(true){
-		shm->mutex.wait();
 		shm->size.wait();
 		cout << shm->messageQueue.front() << endl;
-		shm->messageQueue.pop_front();
-		shm->mutex.post();
+		shm->messageQueue.pop();
 	}
 }
 
