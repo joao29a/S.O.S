@@ -1,46 +1,56 @@
-#include "include/Server.hpp"
+#include "include/Server.h"
 
-//!TODO
-/*
- * Aqui tem que ter o sistema de comunicação entre os dois
- * forks!
- */
+void* Server::getMemoryAddr(){
+	return memoryRegion->get_address();
+}
 
-/* TODO depois de receber uma mensagem tem que colocar na fila
- * para que o outro fork fique consumindo.*/
-void Server::clientManaging(){
-   /* TODO Só copiar o código do gerenciador. Pra cada conexão criar uma thread.
-    * Recebeu uma mensagem coloca na fila.*/
+void Server::createMessageQueue(){
+	shm = new (getMemoryAddr()) shared_messages;
+}
 
+void Server::createSharedMemory(){
+	try{
+		memoryRegion = new mapped_region(anonymous_shared_memory(MEMORY_SIZE));
+		memset(memoryRegion->get_address(),0,memoryRegion->get_size());
+		createMessageQueue();
+	} catch (exception& e){
+		cerr << "Exception: sharedMemory: " << e.what() << endl;
+	}
+}
+
+void Server::manipulateData(string data, socket_ptr sock){
+	shm->messageQueue.push(data);
+	shm->size.post();
+}
+
+void Server::consumeData(){
+	while(true){
+		shm->size.wait();
+		cout << shm->messageQueue.front() << endl;
+		shm->messageQueue.pop();
+	}
 }
 
 void Server::execMsg(string msg){
-   /*!TODO
-    * Executa a mensagem e envia o resultado.
-    */
 }
 
-void Server::startServer(int port){
-   int id = fork();
-   if(id == 0){
-      try{
-         boost::asio::io_service io_service;
-         //clientManaging(io_service, port);
-      }catch (std::exception& e){
-         std::cerr << "Exception: startService: " << e.what() << "\n";
-      }
-   }else{
-      /* TODO segundo fork tem que ficar consumindo a fila! */
-   }
+void Server::initServer(int port){
+	createSharedMemory();
+	int id = fork();
+	if(id > 0){
+		initSocket(port);
+	}
+	else if (id == 0){
+		consumeData();
+	}
 }
 
 int main(int argc, char *argv[]){
-   int port = 0;
-   if(argc > 1){
-      port = atoi(argv[1]);
-   }
-
-   Server server;
-   server.startServer(port);
-   return 0;
+	int port = 0;
+	if(argc > 1){
+		port = atoi(argv[1]);
+	}
+	Server server;
+	server.initServer(port);
+	return 0;
 }

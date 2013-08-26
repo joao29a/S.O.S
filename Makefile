@@ -1,20 +1,36 @@
-CPP=clang++
-LIBBOOST=-lboost_system -lboost_thread -lboost_unit_test_framework -I/usr/include/ -lpthread
-gerenInclude=-I./geren/
+CPP=g++
+LIBBOOST=-lrt -lboost_system -lboost_thread -lboost_unit_test_framework -I/usr/include/ -lpthread
+DIRMANAGEMENT=management/
+DIRSERVICE=service/
+DIRSERVER=server/
+DIRTEST=tests/
+DIRLIB=lib/
+SRC_SERVER=$(wildcard $(DIRSERVER)*.cpp)
+SRC_SERVICE=$(wildcard $(DIRSERVICE)*.cpp)
+SRC_LIB_MANAG=$(wildcard $(DIRMANAGEMENT)*.cpp $(DIRLIB)*.cpp)
+SRC_TEST=$(DIRTEST)gerenTests.cpp
+OBJ_SERVER=$(SRC_SERVER:.cpp=.o)
+OBJ_SERVICE=$(SRC_SERVICE:.cpp=.o)
+OBJ_LIB_MANAG=$(SRC_LIB_MANAG:.cpp=.o)
+OBJ_TEST=$(SRC_TEST:.cpp=.o)
+INCLUDE=-I$(DIRMANAGEMENT) -I$(DIRSERVICE) -I$(DIRSERVER) -I$(DIRLIB) -std=c++11
 
-all: gerenServidor Server makeTest
+all: ServiceManager Server Test
 
-gerenServidor:
-	 ${CPP} -I./ -Igeren/ geren/GerenciadorServidores.cpp -o Geren ${LIBBOOST} -std=c++11
+.cpp.o:
+	$(CPP) -c $< $(INCLUDE) -o $@
 
-Server:
-	 ${CPP} -I./ -Iserver/ server/Server.cpp -o Server ${LIBBOOST} -std=c++11
+Server: $(OBJ_LIB_MANAG) $(OBJ_SERVER)
+	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
 
-makeTest:
-	 ${CPP} tests/gerenTests.cpp -o testGeren ${LIBBOOST} -I./ -std=c++11
+ServiceManager: $(OBJ_LIB_MANAG) $(OBJ_SERVICE)
+	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
+
+Test: $(OBJ_LIB_MANAG) $(OBJ_TEST)
+	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
 
 clear:
-	 rm Geren
-	 rm testGeren
-	 rm Server
-
+	 rm $(OBJ_SERVER) $(OBJ_SERVICE) $(OBJ_LIB_MANAG) $(OBJ_TEST) -f
+	 rm Server -f
+	 rm ServiceManager -f
+	 rm Test -f
