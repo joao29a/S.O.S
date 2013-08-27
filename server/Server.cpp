@@ -19,15 +19,23 @@ void Server::createSharedMemory(){
 }
 
 void Server::manipulateData(string data, socket_ptr sock){
-	shm->messageQueue.push(data);
-	shm->size.post();
+	shm->mutexThread.lock();
+	strcpy(shm->message,data.c_str());
+	shm->mutexProcess.post();
+	shm->mutexSend.wait();
+	boost::system::error_code error;
+	boost::asio::write(*sock, boost::asio::buffer(string(shm->message)), error);
+	cout << "Message answered!" << endl;
+	shm->mutexAnswer.post();
 }
 
 void Server::consumeData(){
 	while(true){
-		shm->size.wait();
-		cout << shm->messageQueue.front() << endl;
-		shm->messageQueue.pop();
+		shm->mutexProcess.wait();
+		strcat(shm->message," ANSWERED QUESTION!");
+		shm->mutexSend.post();
+		shm->mutexAnswer.wait();
+		shm->mutexThread.unlock();	
 	}
 }
 
