@@ -6,6 +6,8 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <mutex>
+#include <unistd.h>
+#include <fcntl.h>
 
 #define MEMORY_SIZE 240000
 
@@ -21,6 +23,7 @@ struct shared_messages{
 
 class Server: public Management{
 	private:
+                int pipefd[2];
 		mapped_region* memoryRegion;
 		shared_messages* shm;
 		void* getMemoryAddr();

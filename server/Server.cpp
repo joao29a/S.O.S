@@ -20,7 +20,12 @@ void Server::createSharedMemory(){
 
 void Server::manipulateData(string data, socket_ptr sock){
 	shm->mutexThread.lock();
-	strcpy(shm->message,data.c_str());
+
+        /* Send data from client to fork by PIPE */
+        char* msg = (char*) malloc(data.size());
+        strcpy(msg,data.c_str());
+        write(pipefd[1], msg, strlen(msg));
+
 	shm->mutexProcess.post();
 	shm->mutexSend.wait();
 	boost::system::error_code error;
@@ -32,23 +37,36 @@ void Server::manipulateData(string data, socket_ptr sock){
 void Server::consumeData(){
 	while(true){
 		shm->mutexProcess.wait();
-		strcat(shm->message," ANSWERED QUESTION!");
+
+                /* Receve data from parent by PIPE */
+                char buf;
+                string data("");
+                while (read(pipefd[0], &buf, 1) > 0){
+                   data.push_back(buf);
+                }
+
+                /* Execute the data */
+		execMsg(data);
+
 		shm->mutexSend.post();
 		shm->mutexAnswer.wait();
-		shm->mutexThread.unlock();	
+		shm->mutexThread.unlock();
 	}
 }
 
 void Server::execMsg(string msg){
+   strcat(shm->message,"Ok.");
 }
 
 void Server::initServer(int port){
 	createSharedMemory();
 	int id = fork();
+        pipe(pipefd);
 	if(id > 0){
 		initSocket(port);
 	}
 	else if (id == 0){
+                fcntl(pipefd[0], F_SETFL, O_NONBLOCK);
 		consumeData();
 	}
 }
