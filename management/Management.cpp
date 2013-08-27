@@ -7,6 +7,8 @@ void Management::listenSocket(socket_ptr sock){
 	try{
 		while(true){
 			string data = getData(sock);
+			if (data == "NULL")
+				break;
 			manipulateData(data,sock);
 		}
 	}catch (std::exception& e){
@@ -21,7 +23,7 @@ string Management::getData(socket_ptr sock){
 	size_t length = sock->read_some(boost::asio::buffer(data), error);
 
 	if (error == boost::asio::error::eof)
-		throw runtime_error("Empty string");
+		return string("NULL");
 	else if (error)
 		throw boost::system::system_error(error);
 
