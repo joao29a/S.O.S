@@ -27,6 +27,7 @@ string Management::getData(socket_ptr sock){
 	else if (error)
 		throw boost::system::system_error(error);
 
+        data[length] = '\0';
 	cout << "Question: " << data << endl;
 
 	return string(data);

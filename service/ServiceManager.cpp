@@ -26,6 +26,7 @@ string ServiceManager::sendServer(string msg,int port){
 		char reply[10000];
 		cout << "Awaiting reply from server..." << endl;
 		size_t reply_length = socket.read_some(boost::asio::buffer(reply),error);
+                reply[reply_length] = '\0';
 		cout << "Reply: " << reply << endl;
 
 		return string(reply);
@@ -41,7 +42,7 @@ string ServiceManager::askToServers(string msg){
 	int size = 3;
 	int serverChecked[3] = {1,1,1};
 	int serverId;
-	while (size != 0){	
+	while (size != 0){
 		serverId = rand() % 3;
 		while (serverChecked[serverId] == 0)
 			serverId = rand() % 3;
