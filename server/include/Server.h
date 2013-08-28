@@ -16,7 +16,6 @@ struct shared_messages{
 	shared_messages() : mutexProcess(0), mutexAnswer(0), mutexSend(0){}
 	interprocess_semaphore mutexProcess, mutexAnswer, mutexSend;
 	mutex mutexThread;
-	char message[10000];
 };
 
 

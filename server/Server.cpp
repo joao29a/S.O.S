@@ -66,8 +66,9 @@ void Server::manipulateData(string data, socket_ptr sock){
    shm->mutexProcess.post();
    shm->mutexSend.wait();
 
+   string res = read_from_pipe();
    boost::system::error_code error;
-   boost::asio::write(*sock, boost::asio::buffer(string(shm->message)), error);
+   boost::asio::write(*sock, boost::asio::buffer(res), error);
    cout << "Message answered!" << endl;
    shm->mutexAnswer.post();
 }
@@ -89,7 +90,10 @@ void Server::consumeData(){
 
 void Server::execMsg(string msg){
    cout << "msg: " << msg << endl;
-   strcat(shm->message,msg.c_str());
+
+   string res("status?v=0\0");
+
+   write_to_pipe(res);
 }
 
 void Server::initServer(int port){
