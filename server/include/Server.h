@@ -10,7 +10,6 @@
 #include <fcntl.h>
 
 #define MEMORY_SIZE 240000
-
 using namespace boost::interprocess;
 
 struct shared_messages{
@@ -23,7 +22,6 @@ struct shared_messages{
 
 class Server: public Management{
 	private:
-                int pipefd[2];
 		mapped_region* memoryRegion;
 		shared_messages* shm;
 		void* getMemoryAddr();
