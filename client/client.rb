@@ -55,6 +55,7 @@ def Cadastrar()
     puts("Insira uma breve descricao da Especie: ")
     breveDesc = gets.chomp
     socket.send "cadastrar?id=#{id}&nomeCientifico=#{nomeCientifico}&nomePopular=#{nomePopular}&breveDesc=#{breveDesc}", 0
+	puts(socket.gets)
 end
 
 def Buscar()
@@ -70,6 +71,7 @@ def Remover()
     puts("Insira o id da especie que deseja remover: ")
     remove = gets.chomp
     socket.send "remover?id=#{remove}", 0
+	puts(socket.gets)
 end
 
 Menu()

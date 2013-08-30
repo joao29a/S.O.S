@@ -1,5 +1,4 @@
 #include "includes/gerenciadorEspecies.h"  
-#include "includes/capturas.h"
 #include "includes/fileIO.h"     
 #include "includes/listaDeRegistrosWorstFit.h"                                               
 #include "includes/pilhaRegistros.h"
@@ -7,15 +6,10 @@
 #include <stdlib.h>
 #include <cstring>
 #include <iterator>
-#include <unordered_map>
 
 fileIO* ioHeadEspecies;
 listaDeRegistrosWorstFit* ledEspecies;
 gerenciadorEspecies* gerenEspecies;
-
-void clear(){
-	system("clear");
-}
 
 void initEspecies(){
 	ioHeadEspecies = new fileIO();
@@ -26,69 +20,55 @@ void initEspecies(){
 	gerenEspecies->openFile(string("./data/especies"));
 }
 
-void insereEspecie(int id, string nomeCientifico, 
+void commit(){
+	ledEspecies->commitHead(ioHeadEspecies);
+}
+
+string insereEspecie(int id, string nomeCientifico, 
 		string nomePopular, string descricao){
 	especies especie(id,nomeCientifico,nomePopular,descricao);
 	if(gerenEspecies->busca(&especie) == -1){
 		gerenEspecies->insere(especie);
-		cout << "Espécie cadastrada!" << endl;
-	}else{
-		cout << "Espécie já cadastrada" << endl; 
-		getchar();
-		getchar();	
+		commit();
+		return string("status?v=1");
 	}
+	return string("status?v=0");
 }
 
-void interpretarMsg(string reason, map_atributes atributes){
-	if (reason == "cadastrar"){
-		insereEspecie(atoi(atributes["id"].c_str()),atributes["nomeCientifico"],
-				atributes["nomePopular"],atributes["breveDesc"]);
+string buscaEspecie(int id){
+	especies* especie = new especies(id,"","","");
+	int encontrou = gerenEspecies->busca(especie);
+	if(encontrou != -1){
+		return string("resultado?v=1&nomeCientifico="+
+				especie->getNomeCientifico()+"&nomePopular="+
+				especie->getNomePopular()+"&breveDesc="+
+				especie->getDescricao());
 	}
+	return string("status?v=0");
 }
 
-void removeEspecie(){
-	int id = -1;
-
-	clear();
-	cout << "Digite o id do espécie a ser removido: ";
-	scanf("%d",&id);
+string removeEspecie(int id){
 	especies especie(id,"","","");
 
 	bool removeu = gerenEspecies->remove(especie);
 
-	clear();
 	if(removeu){
-		cout << "Remoção efetuado com sucesso!" << endl;
-	}else{
-		cout << "Registro não encontrado!" << endl;	
+		commit();
+		return string("status?v=1");
 	}
-	getchar();
-	getchar();
-	clear();
+	return string("status?v=0");
 }
 
-void menuBuscaEspecie(){
-	int id = -1;
-
-	clear();
-	cout << "Digite o id da espécie a ser buscada: ";
-	scanf("%d",&id);
-	especies* especie = new especies(id,"","","");
-	int encontrou = gerenEspecies->busca(especie);
-	if(encontrou != -1){
-		clear();
-		cout << "Encontrado." << endl;
-		cout << "Id: " << id << endl;
-		cout << "Nome Científico: " << especie->getNomeCientifico() << endl;
-		cout << "Nome Popular: " << especie->getNomePopular() << endl;
-		cout << "Descrição: " << especie->getDescricao() << endl;
-		cout << "Enter para continuar." << endl;
-	}else{
-		clear();
-		cout << "Nenhum registro encontrado." << endl;
+string interpretarMsg(string reason, map_atributes atributes){
+	if (reason == "cadastrar"){
+		return insereEspecie(atoi(atributes["id"].c_str()),atributes["nomeCientifico"],
+					atributes["nomePopular"],atributes["breveDesc"]);
 	}
-	getchar();
-	getchar();
-	clear();
+	else if (reason == "buscar"){
+		return buscaEspecie(atoi(atributes["id"].c_str()));
+	}
+	else if (reason == "remover"){
+		return removeEspecie(atoi(atributes["id"].c_str()));
+	}
+	return string("NULL");
 }
-

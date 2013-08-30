@@ -1,10 +1,11 @@
 #ifndef INTERPRETARMSG_H
 #define INTERPRETARMSG_H
 #include <unordered_map>
+#include <string>
 
 typedef unordered_map<string,string> map_atributes;
 
 void initEspecies();
-void interpretarMsg(string, map_atributes);
+string interpretarMsg(string, map_atributes);
 
 #endif

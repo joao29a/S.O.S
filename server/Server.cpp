@@ -90,10 +90,7 @@ void Server::consumeData(){
 
 void Server::execMsg(string msg){
 	message_ptr message = messageParse(msg);
-	interpretarMsg(message->reason,message->atributes);
-
-	string res("status?v=0\0");
-
+	string res = interpretarMsg(message->reason,message->atributes);
 	write_to_pipe(res);
 }
 
