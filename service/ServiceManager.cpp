@@ -33,7 +33,7 @@ string ServiceManager::sendServer(string msg,int port){
 	}catch (std::exception& e){
 		std::cerr << "Exception: askToServers: " << e.what() << "\n";
 	}
-	return string("null");
+	return string("status?v=0");
 }
 
 /* Ask for all server if they have some thing asked by the msg
@@ -47,13 +47,13 @@ string ServiceManager::askToServers(string msg){
 		while (serverChecked[serverId] == 0)
 			serverId = rand() % 3;
 		string res = sendServer(msg,8870+serverId);
-		if(res != "null"){
+		if(res.compare("status?v=0") != 0){
 			return res;
 		}
 		serverChecked[serverId] = 0;
 		size--;
 	}
-	return string("null");
+	return string("status?v=0");
 }
 
 int main(){
