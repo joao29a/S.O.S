@@ -10,15 +10,15 @@ using namespace std;
 
 class fileIO{
 
-private:
-        FILE *pFile;
-public:
-        bool openFile(string);
-	bool openFileW(string);
-        void closeFile();
-	string readPos(int,int);
-	string readLine();
-	void writeAtPos(int,string);
+	private:
+		FILE *pFile;
+	public:
+		bool openFile(string);
+		bool openFileW(string);
+		void closeFile();
+		string readPos(int,int);
+		string readLine();
+		void writeAtPos(int,string);
 };
 
 #endif

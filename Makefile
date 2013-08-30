@@ -23,7 +23,7 @@ all: ServiceManager Server Test
 .cpp.o:
 	$(CPP) -c $< $(INCLUDE) -o $@
 
-Server: $(OBJ_LIB_MANAG) $(OBJ_SERVER) $(OBJ_LIB_TREE)
+Server: $(OBJ_LIB_MANAG) $(OBJ_LIB_TREE) $(OBJ_SERVER) 
 	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
 
 ServiceManager: $(OBJ_LIB_MANAG) $(OBJ_SERVICE)

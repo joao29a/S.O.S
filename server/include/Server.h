@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include "include/Management.h"
+#include "includes/interpretarMsg.h"
 #include <boost/interprocess/anonymous_shared_memory.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
