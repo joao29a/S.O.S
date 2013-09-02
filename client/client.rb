@@ -14,7 +14,7 @@ def Menu()
     elsif (opcao == "3")
         Remover()
     else
-        puts("Goodbye!")
+        abort("Goodbye!")
     end
 end
 
@@ -30,37 +30,49 @@ def Cadastrar()
     puts("Insira uma breve descricao da Especie: ")
     breveDesc = gets.chomp
     socket.send "cadastrar?id=#{id}&nomeCientifico=#{nomeCientifico}&nomePopular=#{nomePopular}&breveDesc=#{breveDesc}", 0
-	resposta = socket.gets
-    if (resposta == "status?v=0")
+	resposta = socket.gets.chomp
+    if (resposta.eql? ("status?v=0"))
         puts("A especie ja esta cadastrada.")
-    elsif (resposta == "status?v=1")
+    elsif (resposta.eql? ("status?v=1"))
         puts("Cadastro de Especie realizado com sucesso.")
     end
     socket.close
+    puts("")
 end
 
 def Buscar()
+    system "clear"
     socket = TCPSocket.new 'localhost', 8888
     puts("Insira uma id para busca: ")
     busca = gets.chomp
     socket.send "buscar?id=#{busca}", 0
-    resposta = socket.gets
+    resposta = socket.gets.chomp
     if (resposta == "status?v=0")
         puts("Especie nao cadastrada!")
     else
         puts(resposta.split(/&/))
     end
     socket.close
+    puts("")
 end
 
 def Remover()
+    system "clear"
     socket = TCPSocket.new 'localhost', 8888
     puts("Insira o id da especie que deseja remover: ")
     remove = gets.chomp
     socket.send "remover?id=#{remove}", 0
-	puts(socket.gets)
+    resposta = socket.gets.chomp
+    if (resposta == "status?v=0")
+        puts("Especie nao cadastrada!")
+    else
+        puts("Especie removida com sucesso!")
+    end
     socket.close
+    puts("")
 end
 
-Menu()
+while true
+    Menu()
+end
 
