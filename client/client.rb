@@ -33,8 +33,8 @@ def Cadastrar()
 	resposta = socket.gets
     if (resposta == "status?v=0")
         puts("A especie ja esta cadastrada.")
-    else
-        puts("Cadastro de Especie realizado com sucesso;")
+    elsif (resposta == "status?v=1")
+        puts("Cadastro de Especie realizado com sucesso.")
     end
     socket.close
 end
@@ -48,9 +48,9 @@ def Buscar()
     if (resposta == "status?v=0")
         puts("Especie nao cadastrada!")
     else
-        puts("Encontrado!")
+        puts(resposta.split(/&/))
     end
-    #socket.close
+    socket.close
 end
 
 def Remover()
