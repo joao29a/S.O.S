@@ -5,6 +5,7 @@ Protocolo v1.1
 =====
 
 Execução do Servidor:
+	
 	- As possíveis portas para os servidores são, 8870, 8871 e 8872
 	- Ao executar o sevidor deve-se passar por argumento o número da porta.
 
