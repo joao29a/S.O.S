@@ -1,8 +1,14 @@
-S.O.S
+Aplicação Distribúida para Cadastro de Espécies de Animais.
 =====
 
 Protocolo v1.1
 =====
+
+Compilação:
+
+	- Para que seja possível a compilação da aplicação, é necessário que haja
+	a biblioteca libboost versão 1.49 ou acima. Caso não tenha a biblioteca, insira 
+	na linha de comando: ~$ make install-boost
 
 Execução do Servidor:
 	
