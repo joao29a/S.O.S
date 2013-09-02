@@ -1,30 +1,5 @@
 require 'socket'
 
-=begin
-require 'gtk2'
-
-class RubyApp < Gtk::Window
-
-    def initialize
-        super
-    
-        set_title "Center"
-        signal_connect "destroy" do 
-            Gtk.main_quit 
-        end
-
-        set_default_size 250, 200
-        set_window_position Gtk::Window::POS_CENTER
-        
-        show
-    end
-end
-
-Gtk.init
-    window = RubyApp.new
-Gtk.main
-=end
-
 def Menu()
     puts("Sistema de Cadastro de Especies de Animais")
     puts("1 - Cadastrar nova especie:")
@@ -39,7 +14,7 @@ def Menu()
     elsif (opcao == "3")
         Remover()
     else
-        puts("Volte Sempre!")
+        puts("Goodbye!")
     end
 end
 
@@ -55,7 +30,13 @@ def Cadastrar()
     puts("Insira uma breve descricao da Especie: ")
     breveDesc = gets.chomp
     socket.send "cadastrar?id=#{id}&nomeCientifico=#{nomeCientifico}&nomePopular=#{nomePopular}&breveDesc=#{breveDesc}", 0
-	puts(socket.gets)
+	resposta = socket.gets
+    if (resposta == "status?v=0")
+        puts("A especie ja esta cadastrada.")
+    else
+        puts("Cadastro de Especie realizado com sucesso;")
+    end
+    socket.close
 end
 
 def Buscar()
@@ -63,7 +44,13 @@ def Buscar()
     puts("Insira uma id para busca: ")
     busca = gets.chomp
     socket.send "buscar?id=#{busca}", 0
-    puts(socket.gets)
+    resposta = socket.gets
+    if (resposta == "status?v=0")
+        puts("Especie nao cadastrada!")
+    else
+        puts("Encontrado!")
+    end
+    #socket.close
 end
 
 def Remover()
@@ -72,6 +59,7 @@ def Remover()
     remove = gets.chomp
     socket.send "remover?id=#{remove}", 0
 	puts(socket.gets)
+    socket.close
 end
 
 Menu()
