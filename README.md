@@ -4,6 +4,10 @@ S.O.S
 Protocolo v1.1
 =====
 
+Execução do Servidor:
+	- As possíveis portas para os servidores são, 8870, 8871 e 8872
+	- Ao executar o sevidor deve-se passar por argumento o número da porta.
+
 Cadastro de espécie x: 
   - cadastrar?id=x&nomeCientifico=nome&nomePopular=nome2&breveDesc=É feito pra burro
   - Possíveis respostas:
