@@ -26,6 +26,14 @@ Server: $(OBJ_LIB_MANAG) $(OBJ_LIB_TREE) $(OBJ_SERVER)
 ServiceManager: $(OBJ_LIB_MANAG) $(OBJ_SERVICE)
 	 $(CPP) $(INCLUDE) $^ -o $@ $(LIBBOOST)
 
+install-boost:
+	@echo "Baixando libboost v 1.54...."
+	@chmod +x install
+	@./install install
+
+uninstall-boost:
+	@./install uninstall
+
 clear:
 	 rm $(OBJ_SERVER) $(OBJ_SERVICE) $(OBJ_LIB_MANAG) $(OBJ_TEST) $(OBJ_LIB_TREE) -f
 	 rm Server -f

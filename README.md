@@ -3,12 +3,20 @@ Aplicação Distribúida para Cadastro de Espécies de Animais.
 
 Protocolo v1.1
 =====
+Desenvolvedores:
+
+	- Diogo Takayuki Murata
+	- João Almeida de Jesus Junior
+	- Vanderson Martins do Rosário
 
 Compilação:
 
 	- Para que seja possível a compilação da aplicação, é necessário que haja
 	a biblioteca libboost versão 1.49 ou acima. Caso não tenha a biblioteca, insira 
 	na linha de comando: ~$ make install-boost
+	- Para desinstalar: ~$ make uninstall-boost
+	- Ao instalar ou desinstalar a biblioteca, é de sua inteira responsabilidade qualquer dano que possa
+	ser causado.
 
 Execução do Servidor:
 	
